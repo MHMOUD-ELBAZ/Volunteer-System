@@ -1,0 +1,11 @@
+﻿global using Demo.Data.Models;
+global using Demo.Data;
+global using Microsoft.AspNetCore.Identity;
+global using Demo.Business.DTOs;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
+global using Demo.Business.IServices;
+global using Demo.Business.Services;
+global using Demo.Data.IRepositories;
+global using Demo.Data.Repositories;
+global using Microsoft.EntityFrameworkCore;
