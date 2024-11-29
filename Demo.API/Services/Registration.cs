@@ -77,10 +77,7 @@ namespace Demo.API.Services
             {
                 options.AddPolicy("MyPolicy", policy =>
                 {
-                    //policy.WithOrigins("")
-                    //.AllowAnyMethod().AllowAnyHeader();
                     policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-
                 });
             });
 

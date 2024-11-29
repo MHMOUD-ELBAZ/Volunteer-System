@@ -23,6 +23,8 @@ public class Program
         app.UseStaticFiles();
         app.UseHttpsRedirection();
 
+        app.UseCors("MyPolicy");
+
         app.UseAuthorization();
 
 

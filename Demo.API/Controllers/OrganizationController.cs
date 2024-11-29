@@ -17,7 +17,7 @@ public class OrganizationController : ControllerBase
 
 
     [HttpGet("{id}")]
-    public ActionResult<OrganizationDto> GetById(string id)
+    public ActionResult<OrganizationDetailsDto> GetById(string id)
     {
         try
         {

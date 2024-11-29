@@ -24,20 +24,16 @@ public class AccountController : ControllerBase
     #region Register
 
     [HttpPost("registerV")]
-    public async Task<IActionResult> RegisterVolunteer([FromForm] RegisterVolunteerDto dto)
+    public async Task<ActionResult<VolunteerDto>> RegisterVolunteer([FromForm] RegisterVolunteerDto dto)
     {
         try
         {
-            //var user = await CreateApplicationUser(dto.Email, dto.Name, dto.Phone, UserType.Volunteer, dto.Password);
             var user = await RegisterApplicationUser(dto, UserType.Volunteer);
             if (user == null)
                 return BadRequest(ModelState);
 
-            //user.Photo =
-            //    (dto.Photo != null ? PhotoSetting.UploadPhoto(dto.Photo, UserType.Volunteer.ToString()) : PhotoSetting.VolunteerIcon);
-
             _volunteerService.AddVolunteer(dto,user.Id);
-            return Created();
+            return RedirectToAction("Get", "Volunteer", new { id = user.Id }); 
         }
         catch (Exception ex)
         {
@@ -47,54 +43,24 @@ public class AccountController : ControllerBase
 
 
     [HttpPost("registerO")]
-    public async Task<IActionResult> RegisterOrganization([FromForm] RegisterOrganizationDto dto)
+    public async Task<ActionResult<OrganizationDetailsDto>> RegisterOrganization([FromForm] RegisterOrganizationDto dto)
     {
         try
         {
-            //var user = await CreateApplicationUser(dto.Email, dto.Name, dto.Phone, UserType.Organization, dto.Password);
             var user = await RegisterApplicationUser(dto, UserType.Volunteer);
             if (user == null)
                 return BadRequest(ModelState);
 
             _organizationService.Add(dto, user.Id);
-            return Created();
+            return RedirectToAction("GetById", "Organization", new { id = user.Id });
+
         }
         catch (Exception ex)
         {
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
-    /*
-    private async Task<ApplicationUser?> CreateApplicationUser(string email, string name, string phone, UserType userType, string password)
-    {
-        var existingUser = await _userManager.FindByEmailAsync(email);
-        if (existingUser != null)
-        {
-            ModelState.AddModelError(string.Empty, "This user already have an account.");
-            return null;
-        }
 
-
-        var user = new ApplicationUser
-        {
-            Email = email,
-            UserName = name,
-            PhoneNumber = phone,
-            UserType = userType
-        };
-
-        var result = await _userManager.CreateAsync(user, password);
-        if (!result.Succeeded)
-        {
-            foreach (var error in result.Errors)
-                ModelState.AddModelError(string.Empty, error.Description);
-            return null;
-        }
-
-        return user;
-    }
-    */
-    
     private async Task<ApplicationUser?> RegisterApplicationUser(RegisterUserDto userDto, UserType userType)
     {
         var existingUser = await _userManager.FindByEmailAsync(userDto.Email);

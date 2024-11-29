@@ -27,8 +27,6 @@ public class VolunteerController : ControllerBase
             if (volunteer == null)
                 return NotFound($"No volunteer with this ID: {id}");
 
-
-
             return Ok(volunteer);
         }
         catch (Exception ex) { return BadRequest(ex.Message); }
