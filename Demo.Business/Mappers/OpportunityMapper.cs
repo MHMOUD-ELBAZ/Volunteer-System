@@ -31,7 +31,7 @@ public class OpportunityMapper
 
     public static OpportunityWithOrganizationDto MapToOpportunityWithOrganizationDto(Opportunity opportunity)
     {
-        return new OpportunityWithOrganizationDto
+        var result = new OpportunityWithOrganizationDto() 
         {
             Id = opportunity.Id,
             Description = opportunity.Description,
@@ -39,8 +39,20 @@ public class OpportunityMapper
             Deadline = opportunity.Deadline,
             DatePosted = opportunity.DatePosted,
             OrganizationId = opportunity.OrganizationId,
-            Organization = OrganizationMapper.MapToOrganizationDto(opportunity.Organization)
+            Organization = OrganizationMapper.MapToOrganizationDetailsDto(opportunity.Organization)
         };
+
+        if (opportunity?.OpportunitySkills != null)
+        {
+            result.Skills = new List<SkillDto>();
+            foreach (var os in opportunity.OpportunitySkills)
+            {
+                if (os.Skill != null)
+                    result.Skills.Add(SkillMapper.MapToSkillDto(os.Skill));
+            }
+        }
+
+        return result;
     }
 
     public static OpportunityWithApplicationsDto MapToOpportunityWithApplicationsDto(Opportunity opportunity)

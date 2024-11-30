@@ -1,7 +1,4 @@
-﻿using Demo.Business.Services.Interfaces;
-using Demo.Business.DTOs;
-using Microsoft.AspNetCore.Mvc;
-using Demo.Business.DTOs.Opportunity;
+﻿
 
 namespace Demo.API.Controllers;
 
@@ -52,7 +49,7 @@ public class OpportunityController : ControllerBase
 
 
     [HttpGet("{id}/organization")]
-    public ActionResult<OpportunityDto> GetOpportunityWithOrganization(int id)
+    public ActionResult<OpportunityWithOrganizationDto> GetOpportunityWithOrganization(int id)
     {
         try
         {
@@ -72,7 +69,7 @@ public class OpportunityController : ControllerBase
 
 
     [HttpGet("{id}/applications")]
-    public ActionResult<OpportunityDto> GetOpportunityWithApplications(int id)
+    public ActionResult<OpportunityWithApplicationsDto> GetOpportunityWithApplications(int id)
     {
         try
         {

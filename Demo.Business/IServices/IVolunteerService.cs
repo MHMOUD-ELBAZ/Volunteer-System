@@ -15,6 +15,4 @@ public interface IVolunteerService
 
     VolunteerWithApplicationsDto? GetWithApplications(string volunteerId);
 
-    //IEnumerable<OpportunityDto> GetVolunteerOpportunities(string volunteerId);
-    //IEnumerable<ReviewDto> GetVolunteerReviews(string volunteerId);
 }

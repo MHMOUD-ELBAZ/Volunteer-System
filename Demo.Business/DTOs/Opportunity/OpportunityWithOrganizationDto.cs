@@ -8,6 +8,6 @@ namespace Demo.Business.DTOs.Opportunity
 {
     public class OpportunityWithOrganizationDto : OpportunityDto
     {
-        public OrganizationDto Organization { get; set; }
+        public OrganizationDetailsDto? Organization { get; set; }
     }
 }

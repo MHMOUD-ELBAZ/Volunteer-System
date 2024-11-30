@@ -1,7 +1,4 @@
-﻿using Demo.Business.Services.Interfaces;
-using Demo.Business.DTOs;
-using Microsoft.AspNetCore.Mvc;
-using Demo.Business.DTOs.Review;
+﻿
 
 namespace Demo.API.Controllers;
 

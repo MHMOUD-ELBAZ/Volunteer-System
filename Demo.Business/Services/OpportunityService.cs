@@ -1,7 +1,7 @@
 ﻿using Demo.Business.DTOs;
 using Demo.Business.DTOs.Opportunity;
 using Demo.Business.Mappers;
-using Demo.Business.Services.Interfaces;
+
 
 
 namespace Demo.Business.Services;
@@ -11,13 +11,15 @@ public class OpportunityService : IOpportunityService
     private readonly IOpportunityRepository _opportunityRepository;
     private readonly ISkillRepository _skillRepository;
     private readonly IOpportunitySkillRepository _opportunitySkillRepository;
+    private readonly IOrganizationRepository _organizationRepository;
 
     public OpportunityService(IOpportunityRepository opportunityRepository, ISkillRepository skillRepository, 
-        IOpportunitySkillRepository opportunitySkillRepository)
+        IOpportunitySkillRepository opportunitySkillRepository, IOrganizationRepository organizationRepository)
     {
         _opportunityRepository = opportunityRepository;
         _skillRepository = skillRepository;
         _opportunitySkillRepository = opportunitySkillRepository;
+        this._organizationRepository = organizationRepository;
     }
 
     public OpportunityDto? GetById(int id)
@@ -27,7 +29,6 @@ public class OpportunityService : IOpportunityService
         if(opportunity != null)
         {
             opportunity.OpportunitySkills = new List<OpportunitySkill>(_opportunitySkillRepository.GetSkillsForOpportunity(id));
-
         }
 
         return opportunity != null ? OpportunityMapper.MapToOpportunityDto(opportunity) : null;
@@ -35,8 +36,14 @@ public class OpportunityService : IOpportunityService
 
     public OpportunityWithOrganizationDto? GetOpportunityWithOrganization(int id)
     {
-        var opportunity = _opportunityRepository.GetWithOrganization(id);
-        return opportunity != null ? OpportunityMapper.MapToOpportunityWithOrganizationDto(opportunity) : null;
+        var opportunity = _opportunityRepository.Get(id);
+
+        if (opportunity == null) return null; 
+        
+        opportunity.Organization = _organizationRepository.Get(opportunity.OrganizationId);
+        opportunity.OpportunitySkills = new List<OpportunitySkill>(_opportunitySkillRepository.GetSkillsForOpportunity(id));
+
+        return OpportunityMapper.MapToOpportunityWithOrganizationDto(opportunity) ;
     }
 
     public OpportunityWithApplicationsDto? GetOpportunityWithApplications(int id)

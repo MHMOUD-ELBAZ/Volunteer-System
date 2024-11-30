@@ -15,7 +15,7 @@ public class OpportunityRepository: Repository<Opportunity>, IOpportunityReposit
 
     public Opportunity? Get(int id)
     {
-        return _dbContext.Opportunities.Include(o => o.OpportunitySkills).SingleOrDefault(o => o.Id == id);
+        return _dbContext.Opportunities.SingleOrDefault(o => o.Id == id);
     }
 
     public Opportunity? GetWithApplications(int id)
@@ -25,6 +25,6 @@ public class OpportunityRepository: Repository<Opportunity>, IOpportunityReposit
 
     public Opportunity? GetWithOrganization(int id)
     {
-        return _dbContext.Opportunities.Include(o => o.Organization).Include(o => o.OpportunitySkills).FirstOrDefault(o => o.Id == id);
+        return _dbContext.Opportunities.Include(o => o.Organization).FirstOrDefault(o => o.Id == id);
     }
 }

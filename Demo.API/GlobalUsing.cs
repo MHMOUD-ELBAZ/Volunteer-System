@@ -9,3 +9,11 @@ global using Demo.Business.Services;
 global using Demo.Data.IRepositories;
 global using Demo.Data.Repositories;
 global using Microsoft.EntityFrameworkCore;
+global using Demo.API.Services;
+global using Demo.Business.DTOs.Organization;
+global using Demo.Business.DTOs.Application;
+global using Demo.Business.DTOs.Opportunity;
+global using Demo.Business.DTOs.Volunteer;
+global using Demo.Business.DTOs.Review;
+global using Demo.Business.DTOs.Skill;
+

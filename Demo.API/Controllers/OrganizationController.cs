@@ -1,6 +1,4 @@
-﻿using Demo.Business.DTOs;
-using Demo.Business.DTOs.Organization;
-using Microsoft.AspNetCore.Mvc;
+﻿
 
 namespace Demo.API.Controllers;
 

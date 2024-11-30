@@ -1,5 +1,4 @@
-﻿using Demo.Business.DTOs.Skill;
-
+﻿
 namespace Demo.API.Controllers;
 
 [Route("api/[controller]")]

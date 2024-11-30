@@ -1,8 +1,4 @@
-﻿using Demo.Business.Services.Interfaces;
-using Demo.Business.DTOs;
-using Microsoft.AspNetCore.Mvc;
-using Demo.Business.DTOs.Application;
-
+﻿
 namespace Demo.API.Controllers;
 
 [Route("api/[controller]")]

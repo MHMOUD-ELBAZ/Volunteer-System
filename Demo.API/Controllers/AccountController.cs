@@ -1,8 +1,4 @@
-﻿using Demo.API.Services;
-using Demo.Business.DTOs.Organization;
-using Demo.Business.DTOs.Volunteer;
-
-
+﻿
 namespace Demo.API.Controllers;
 
 [Route("api/[controller]")]
@@ -109,14 +105,21 @@ public class AccountController : ControllerBase
         if(user.Photo != null)
             PhotoSetting.Delete(user.UserType.ToString(), user.Photo);
 
-        var result  = await _userManager.DeleteAsync(user);
-        if(result.Succeeded)
-            return NoContent();
 
-        foreach (var error in result.Errors)
-            ModelState.AddModelError(string.Empty, error.Description);
+        try
+        {
+            int rows = await _userManager.Users.Where(u => u.Id == id).ExecuteDeleteAsync();
+            
+            if (rows > 0) 
+                return NoContent();
+            else 
+                return BadRequest($"Error in deleting user with ID {id}");
+        }     
+        catch(Exception ex) 
+        { 
+            return BadRequest($"Error {ex.Message} in deleting user with ID {id}");  
+        }
 
-        return BadRequest(ModelState); 
     }
 
     #endregion
@@ -201,6 +204,3 @@ public class AccountController : ControllerBase
     #endregion
 }
 
-//var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-//if (string.IsNullOrEmpty(userId))
-//    return Unauthorized("User is not logged in.");
