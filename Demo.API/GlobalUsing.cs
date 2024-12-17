@@ -16,4 +16,7 @@ global using Demo.Business.DTOs.Opportunity;
 global using Demo.Business.DTOs.Volunteer;
 global using Demo.Business.DTOs.Review;
 global using Demo.Business.DTOs.Skill;
+global using Demo.API.Filters;
+global using Microsoft.AspNetCore.Authorization;
+global using System.Security.Claims;
 

@@ -1,5 +1,4 @@
 ﻿
-
 namespace Demo.API.Controllers;
 
 [Route("api/[controller]")]
@@ -14,7 +13,7 @@ public class OpportunityController : ControllerBase
     }
 
     [HttpGet("GetAll")]
-    public ActionResult<IEnumerable<OpportunityDto>> GetAll()
+    public ActionResult<IEnumerable<OpportunityWithOrganizationDto>> GetAll()
     {
         try
         {
@@ -88,8 +87,14 @@ public class OpportunityController : ControllerBase
     }
 
     [HttpPost]
+    //[Authorize]
+    //[OrganizationFilter]
     public ActionResult<OpportunityDto> Create([FromBody] CreateOpportunityDto opportunityDto)
     {
+        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+        //if (opportunityDto.OrganizationId != tokenId)
+        //    return BadRequest($"Logged organization with ID: {tokenId} can't add opportunity for organization with ID: {opportunityDto.OrganizationId}");
+
         try
         {
             if (opportunityDto == null)
@@ -107,8 +112,14 @@ public class OpportunityController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    //[Authorize]
+    //[OrganizationFilter]
     public ActionResult<OpportunityDto> Update(int id, [FromBody] CreateOpportunityDto opportunityDto)
     {
+        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+        //if (opportunityDto.OrganizationId != tokenId)
+        //    return BadRequest($"Logged organization with ID: {tokenId} can't update opportunity for organization with ID: {opportunityDto.OrganizationId}");
+
         try
         {
             if (opportunityDto == null)
@@ -132,6 +143,8 @@ public class OpportunityController : ControllerBase
 
 
     [HttpDelete("{id}")]
+    //[Authorize]
+    //[OrganizationFilter]
     public IActionResult Delete(int id)
     {
         try

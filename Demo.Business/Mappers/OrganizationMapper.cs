@@ -65,7 +65,23 @@ public static class OrganizationMapper
             Opportunities = organization.Opportunities?.Select(a => OpportunityMapper.MapToOpportunityDto(a)).ToList()
         };
     }
+    public static OrganizationWithReviewsDto MapToOrganizationWithReviewsDto(Organization organization, IEnumerable<Review> reviews)
+    {
+        var result = new OrganizationWithReviewsDto
+        {
+            OrganizationId = organization.OrganizationId,
+            Mission = organization.Mission,
+            Website = organization.Website,
+            MainBranch = organization.MainBranch,
+            BankName = organization.BankName,
+            BankAccount = organization.BankAccount,
+        };
 
+        if (reviews != null)
+            result.Reviews = reviews.Select(ReviewMapper.MapToReviewDto);
+        
+        return result;
+    }
     public static Organization MapToOrganization(RegisterOrganizationDto dto, string id)
     {
         return new Organization

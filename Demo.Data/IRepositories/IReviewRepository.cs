@@ -6,7 +6,8 @@ public interface IReviewRepository : IRepository<Review>
 {
     Review? Get(int id);
 
-    Review? GetWithAllData(int id);
+    IEnumerable<Review>? GetForVolunteer(string volunteerId);
+    IEnumerable<Review>? GetForOrganization(string organizationId);
 
     Review? GetWithApplication(int id);
 }

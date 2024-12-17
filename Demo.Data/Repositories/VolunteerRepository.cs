@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Demo.Data.Repositories;
 
-public class  VolunteerRepository: Repository<Volunteer>, IRepositories.IVolunteerRepository
+public class  VolunteerRepository: Repository<Volunteer>, IVolunteerRepository
 {
     public VolunteerRepository(AppDbContext dbContext) : base(dbContext)
     {
@@ -30,4 +30,5 @@ public class  VolunteerRepository: Repository<Volunteer>, IRepositories.IVolunte
     {
         return _dbContext.Volunteers.Include(v => v.VolunteerSkills).FirstOrDefault(v => v.VolunteerId == id);
     }
+
 }

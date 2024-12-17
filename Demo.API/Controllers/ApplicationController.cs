@@ -1,8 +1,8 @@
-﻿
-namespace Demo.API.Controllers;
+﻿namespace Demo.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+//[Authorize]
 public class ApplicationController : ControllerBase
 {
     private readonly IApplicationService _applicationService;
@@ -89,8 +89,14 @@ public class ApplicationController : ControllerBase
 
 
     [HttpPost]
+    //[VolunteerFilter]
     public ActionResult<ApplicationDto> Create([FromBody] CreateApplicationDto createApplicationDto)
     {
+        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+        //if (createApplicationDto.VolunteerId != tokenId)
+        //    return BadRequest($"Mismatch between logged in user ID and the data to be proceeded");
+
+
         try
         {
             if (createApplicationDto == null)
@@ -107,13 +113,15 @@ public class ApplicationController : ControllerBase
 
 
     [HttpPut("{id}")]
+    //[OrganizationFilter]
     public ActionResult<ApplicationDto> Update(int id, [FromBody] UpdateApplicationDto updateApplicationDto)
-    {
-        if (updateApplicationDto == null)
-            return BadRequest("Application data is null.");
+    {       
 
-        if (id != updateApplicationDto.Id)
-            return BadRequest("ID mismatch.");
+        //if (updateApplicationDto == null)
+        //    return BadRequest("Application data is null.");
+
+        //if (id != updateApplicationDto.Id)
+        //    return BadRequest("ID mismatch.");
 
         try
         {
@@ -128,8 +136,10 @@ public class ApplicationController : ControllerBase
 
 
     [HttpDelete("{id}")]
+    //[VolunteerFilter]
     public IActionResult Delete(int id)
     {
+        
         try
         {
             if (!_applicationService.DeleteApplication(id))
@@ -140,7 +150,7 @@ public class ApplicationController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
 }

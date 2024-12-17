@@ -8,9 +8,12 @@ public class ReviewService : IReviewService
 {
     private readonly IReviewRepository _reviewRepository;
 
-    public ReviewService(IReviewRepository reviewRepository)
+    private readonly IApplicationRepository _applicationRepository;
+
+    public ReviewService(IReviewRepository reviewRepository, IApplicationRepository applicationRepository)
     {
         _reviewRepository = reviewRepository;
+        _applicationRepository = applicationRepository;
     }
 
     public ReviewDto? GetReviewById(int id)
@@ -21,9 +24,14 @@ public class ReviewService : IReviewService
 
     public ReviewWithAllDataDto? GetReviewWithAllData(int id)
     {
-        var review = _reviewRepository.GetWithAllData(id);
-        return review != null ? ReviewMapper.MapToReviewWithAllDataDto(review) : null;
+        var review = _reviewRepository.Get(id);
+
+        if (review == null) return null;
+
+        review.Application = _applicationRepository.GetWithVolunteerAndOrganization(id);
+        return  ReviewMapper.MapToReviewWithAllDataDto(review) ;
     }
+
 
     public ReviewWithApplicationDto? GetReviewWithApplication(int id)
     {

@@ -25,8 +25,6 @@ public class Volunteer
     [InverseProperty(nameof(Application.Volunteer))]
     public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
 
-    [InverseProperty(nameof(Review.Volunteer))]
-    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 
     [InverseProperty(nameof(VolunteerSkill.Volunteer))]
     public virtual ICollection<VolunteerSkill> VolunteerSkills { get; set; } = new List<VolunteerSkill>();

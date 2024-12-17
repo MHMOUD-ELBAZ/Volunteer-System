@@ -13,6 +13,7 @@ public interface IOrganizationService
     IEnumerable<OrganizationDto> GetAllOrganizations();
     OrganizationDto? UpdateOrganization(string id, UpdateOrganizationDto organizationDto);
     bool DeleteOrganization(string id);
+    OrganizationWithReviewsDto? GetWithReviews(string id);
 }
 
 

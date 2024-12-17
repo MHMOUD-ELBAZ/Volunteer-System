@@ -1,4 +1,6 @@
-﻿
+﻿using Demo.Business.DTOs.Opportunity;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Demo.API.Controllers;
 
@@ -59,9 +61,32 @@ public class VolunteerController : ControllerBase
         }
     }
 
+    [HttpGet("{id}/reviews")]
+    public ActionResult<VolunteerWithReviewsDto> GetVolunteerWithReviews(string id) 
+    {
+        try
+        {
+            var volunteer = _volunteerService.GetWithReviews(id);
+
+            if (volunteer != null) return Ok(volunteer);
+            
+            return NotFound($"No volunteer found with ID: {id}");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpPut]
+    //[Authorize]
+    //[VolunteerFilter]
     public ActionResult<VolunteerDto> UpdateVolunteerSkills(UpdateVolunteerSkillsDto dto)
     {
+        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+        //if (dto.volunteerId != tokenId)
+        //    return BadRequest($"ID mismatch.");
+
         try
         {
             var updated = _volunteerService.UpdateVolunteerSkills(dto);

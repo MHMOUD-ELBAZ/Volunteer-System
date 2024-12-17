@@ -14,10 +14,12 @@ namespace Demo.Business.Services;
 public class OrganizationService : IOrganizationService
 {
     private readonly IOrganizationRepository _organizationRepository;
+    private readonly IReviewRepository _reviewRepository;
 
-    public OrganizationService(IOrganizationRepository organizationRepository)
+    public OrganizationService(IOrganizationRepository organizationRepository, IReviewRepository reviewRepository)
     {
         _organizationRepository = organizationRepository;
+        _reviewRepository = reviewRepository;
     }
 
     public void Add(RegisterOrganizationDto dto, string id)
@@ -78,4 +80,14 @@ public class OrganizationService : IOrganizationService
         return true;
     }
 
+    public OrganizationWithReviewsDto? GetWithReviews(string id)
+    {
+        var organization = _organizationRepository.Get(id);
+
+        if (organization == null) return null;
+
+        var reviews = _reviewRepository.GetForOrganization(id); 
+
+        return OrganizationMapper.MapToOrganizationWithReviewsDto(organization, reviews);
+    }
 }

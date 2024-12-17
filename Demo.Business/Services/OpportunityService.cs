@@ -52,10 +52,10 @@ public class OpportunityService : IOpportunityService
         return opportunity != null ? OpportunityMapper.MapToOpportunityWithApplicationsDto(opportunity) : null;
     }
 
-    public IEnumerable<OpportunityDto> GetAllOpportunities()
+    public IEnumerable<OpportunityWithOrganizationDto> GetAllOpportunities()
     {
         var opportunities = _opportunityRepository.GetAll().ToList();
-        return opportunities.Select(OpportunityMapper.MapToOpportunityDto);
+        return opportunities.Select(OpportunityMapper.MapToOpportunityWithOrganizationDto);
     }
 
     public OpportunityDto Create(CreateOpportunityDto opportunityDto)

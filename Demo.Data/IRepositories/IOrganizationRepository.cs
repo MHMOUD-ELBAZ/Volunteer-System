@@ -5,7 +5,7 @@ namespace Demo.Data.IRepositories;
 
 public interface IOrganizationRepository : IRepository<Organization>
 {
-    public Organization? Get(string id);
-    public Organization? GetWithApplications(string id);
-    public Organization? GetWithOpportunities(string id);
+    Organization? Get(string id);
+    Organization? GetWithApplications(string id);
+    Organization? GetWithOpportunities(string id);
 }

@@ -9,9 +9,7 @@ namespace Demo.Business.DTOs.Review;
 
 public class CreateReviewDto
 {
-    public int? ApplicationId { get; set; }
-    public string? VolunteerId { get; set; }
-    public string? OrganizationId { get; set; }
+    public int ApplicationId { get; set; }
 
     [Range(0,5)]
     public int Rating { get; set; }

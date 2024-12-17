@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 using System.Reflection.Emit;
+using System.Reflection.Metadata;
 
 
 
@@ -29,10 +30,8 @@ namespace Demo.Data
         {
             base.OnModelCreating(builder);
             builder.Entity<ApplicationUser>().ToTable("User");
-            builder.Entity<Volunteer>(entity =>
-            {
-                entity.ToTable("Volunteer");
-            });
+
+            builder.Entity<Review>().ToTable(tb => tb.UseSqlOutputClause(false));
         }
     }
 }

@@ -18,7 +18,7 @@ public class OrganizationRepository : Repository<Organization>, IOrganizationRep
 
     public Organization? Get(string id)
     {
-        return _dbContext.Organizations.Include(o => o.User).SingleOrDefault(o => o.OrganizationId == id);
+        return _dbContext.Organizations.Include(o => o.User).FirstOrDefault(o => o.OrganizationId == id);
     }
 
     public Organization? GetWithApplications(string id)

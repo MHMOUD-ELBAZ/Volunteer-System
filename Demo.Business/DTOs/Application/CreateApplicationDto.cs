@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Demo.Business.DTOs.Application;
 public class CreateApplicationDto
 {
-    public int? OpportunityId { get; set; }
-    public string? VolunteerId { get; set; }
+    public int OpportunityId { get; set; }
+    public required string VolunteerId { get; set; }
     public string? OrganizationId { get; set; }
 }

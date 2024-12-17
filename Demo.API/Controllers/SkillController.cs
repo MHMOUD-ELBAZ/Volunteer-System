@@ -89,6 +89,8 @@ public class SkillController : ControllerBase
 
 
     [HttpPost]
+    //[Authorize]
+    //[OrganizationFilter]
     public IActionResult Create([FromBody] CreateSkillDto skillDto)
     {
         try
@@ -109,6 +111,8 @@ public class SkillController : ControllerBase
 
 
     [HttpPut("{id}")]
+    //[Authorize]
+    //[OrganizationFilter]
     public IActionResult Update(int id, [FromBody] SkillDto skillDto)
     {
         try
@@ -134,6 +138,8 @@ public class SkillController : ControllerBase
 
 
     [HttpDelete("{id}")]
+    //[Authorize]
+    //[OrganizationFilter]
     public IActionResult Delete(int id)
     {
         try

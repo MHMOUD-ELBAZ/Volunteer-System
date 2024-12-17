@@ -20,7 +20,7 @@ public class VolunteerMapper
             Age = dto.Age
         };
     }
-    
+
     public static VolunteerDto MapToVolunteerDto(Volunteer volunteer)
     {
         var result = new VolunteerDto
@@ -30,15 +30,15 @@ public class VolunteerMapper
             Bio = volunteer.Bio,
             Age = volunteer.Age,
             Rating = volunteer.Rating,
-            Name = volunteer.User?.UserName?? string.Empty,
-            Phone = volunteer.User?.PhoneNumber?? string.Empty,
-            Email = volunteer.User?.Email?? string.Empty,
+            Name = volunteer.User?.UserName ?? string.Empty,
+            Phone = volunteer.User?.PhoneNumber ?? string.Empty,
+            Email = volunteer.User?.Email ?? string.Empty,
         };
 
         if (volunteer.User?.Photo != null)
-            result.Photo = $"Photos/Volunteer/{volunteer.User.Photo}"; 
+            result.Photo = $"Photos/Volunteer/{volunteer.User.Photo}";
 
-        if(volunteer.VolunteerSkills != null)
+        if (volunteer.VolunteerSkills != null)
         {
             foreach (var vs in volunteer.VolunteerSkills)
                 if (vs.Skill != null)
@@ -47,7 +47,7 @@ public class VolunteerMapper
 
         return result;
     }
-      
+
     public static VolunteerWithApplicationsDto MapToVolunteerWithAppDto(Volunteer volunteer)
     {
         ICollection<ApplicationDto> applicationDtos = new List<ApplicationDto>();
@@ -76,6 +76,22 @@ public class VolunteerMapper
             Applications = applicationDtos
         };
 
+        return result;
+    }
+
+    public static VolunteerWithReviewsDto MapToVolunteerWithReviewsDto(Volunteer volunteer, IEnumerable<Review> reviews)
+    {
+        var result =  new VolunteerWithReviewsDto()
+        {
+            VolunteerId = volunteer.VolunteerId,
+            Address = volunteer.Address,
+            Bio = volunteer.Bio,
+            Age = volunteer.Age,
+            Rating = volunteer.Rating
+        };
+
+        if (reviews != null)
+            result.Reviews = reviews.Select(ReviewMapper.MapToReviewDto);
         return result;
     }
 }

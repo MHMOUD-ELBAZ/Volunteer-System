@@ -14,12 +14,6 @@ public class ReviewDto
 
     public int? ApplicationId { get; set; }
 
-    [StringLength(450)]
-    public string? VolunteerId { get; set; }
-
-    [StringLength(450)]
-    public string? OrganizationId { get; set; }
-
     [Range(0, 5)]
     public int Rating { get; set; } = 0; 
 

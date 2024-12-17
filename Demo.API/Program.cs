@@ -10,8 +10,8 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         
-        Registration.RegisterServices(builder.Services,builder.Configuration); 
-
+        Registration.RegisterServices(builder.Services,builder.Configuration);
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -25,6 +25,7 @@ public class Program
 
         app.UseCors("MyPolicy");
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
 

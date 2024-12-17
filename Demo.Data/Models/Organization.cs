@@ -32,6 +32,4 @@ public partial class Organization
     [InverseProperty(nameof(Opportunity.Organization))]
     public virtual ICollection<Opportunity> Opportunities { get; set; } = new List<Opportunity>();
 
-    [InverseProperty(nameof(Review.Organization))]
-    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

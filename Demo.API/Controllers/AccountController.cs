@@ -1,4 +1,13 @@
 ﻿
+using Demo.Business.DTOs;
+using Demo.Data.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.InteropServices;
+using System.Security.Claims;
+using System.Text;
+
 namespace Demo.API.Controllers;
 
 [Route("api/[controller]")]
@@ -8,12 +17,15 @@ public class AccountController : ControllerBase
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IVolunteerService _volunteerService;
     private readonly IOrganizationService _organizationService;
+    private readonly IConfiguration _configuration;
 
-    public AccountController(UserManager<ApplicationUser> userManager, IVolunteerService volunteerService, IOrganizationService organizationService)
+    public AccountController(UserManager<ApplicationUser> userManager, IVolunteerService volunteerService, 
+        IOrganizationService organizationService, IConfiguration configuration)
     {
         _userManager = userManager;
         _volunteerService = volunteerService;
         _organizationService = organizationService;
+        _configuration = configuration;
     }
 
 
@@ -43,7 +55,7 @@ public class AccountController : ControllerBase
     {
         try
         {
-            var user = await RegisterApplicationUser(dto, UserType.Volunteer);
+            var user = await RegisterApplicationUser(dto, UserType.Organization);
             if (user == null)
                 return BadRequest(ModelState);
 
@@ -93,11 +105,54 @@ public class AccountController : ControllerBase
     #endregion
 
 
+    #region Login
+
+    [HttpPost("Login")]
+    public async Task<ActionResult<string>> LoginAsync(LoginDto dto)
+    {
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+
+        if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
+            return BadRequest("Wrong email or password");
+
+        //Give him a JWT
+        var claims = new List<Claim> 
+        { 
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(JwtRegisteredClaimNames.Name, user.UserName ?? "..."),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email ?? "..."),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim("UserType", user.UserType.ToString())    
+        }; 
+
+        
+        SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:secretKey"]));
+        SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha384);
+
+        JwtSecurityToken tokenDesign = new JwtSecurityToken(
+            issuer: _configuration["JWT:issuer"],
+            expires: DateTime.UtcNow.AddDays(1),
+            claims: claims,
+            signingCredentials: credentials
+        );
+
+
+        return Ok(new JwtSecurityTokenHandler().WriteToken(tokenDesign));
+    }
+
+    #endregion
+
+
     #region Delete Account
 
+    //[Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id) 
     {
+        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+        //if (id != tokenId)
+        //    return BadRequest($"The logged user with ID: {tokenId} can't delete user with ID: {id}"); 
+        
         var user = await _userManager.FindByIdAsync(id);
         if (user == null)
             return NotFound($"No user found with ID = {id}");
@@ -128,8 +183,13 @@ public class AccountController : ControllerBase
     #region Update
 
     [HttpPut("updateVolunteer/{volunteerId}")]
+    //[Authorize]
     public async Task<ActionResult> UpdateVolunteer(string volunteerId, [FromForm] UpdateVolunteerDto dto)
     {
+        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+        //if (volunteerId != tokenId)
+        //    return BadRequest($"The logged user with ID: {tokenId} can't update data for user with ID: {volunteerId}");
+
         try
         {
             var user = await _userManager.FindByIdAsync(volunteerId);
@@ -165,8 +225,13 @@ public class AccountController : ControllerBase
 
 
     [HttpPut("updateOrganization/{organizationId}")]
+    //[Authorize]
     public async Task<ActionResult> UpdateOrganization(string organizationId,[FromForm] UpdateOrganizationDto dto)
     {
+        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+        //if (organizationId != tokenId)
+        //    return BadRequest($"The logged user with ID: {tokenId} can't update data for user with ID: {organizationId}");
+
         try
         {
             var user = await _userManager.FindByIdAsync(organizationId);

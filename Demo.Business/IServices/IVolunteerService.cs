@@ -15,4 +15,6 @@ public interface IVolunteerService
 
     VolunteerWithApplicationsDto? GetWithApplications(string volunteerId);
 
+    VolunteerWithReviewsDto? GetWithReviews(string volunteerId);
+
 }

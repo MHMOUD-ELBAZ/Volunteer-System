@@ -7,4 +7,5 @@ public interface  IApplicationRepository: IRepository<Application>
     public Application? GetApplication(int id);
     public Application? GetApplicationWithReviews(int id);
     public Application? GetWithOpportunityAndVolunteer(int id);
+    public Application? GetWithVolunteerAndOrganization(int id);
 }

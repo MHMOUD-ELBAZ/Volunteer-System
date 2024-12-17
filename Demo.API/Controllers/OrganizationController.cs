@@ -1,6 +1,4 @@
-﻿
-
-namespace Demo.API.Controllers;
+﻿namespace Demo.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -50,6 +48,24 @@ public class OrganizationController : ControllerBase
     }
 
 
+    [HttpGet("{id}/reviews")]
+    public ActionResult<OrganizationWithReviewsDto> GetWithReviews(string id)
+    {
+        try
+        {
+            var organization = _organizationService.GetWithReviews(id);
+            if (organization == null)
+                return NotFound($"No organization found with ID: {id}");
+
+            return Ok(organization);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+      
+    
     [HttpGet("{id}/opportunities")]
     public ActionResult<OrganizationWithOpportunitiesDto> GetWithOpportunities(string id)
     {

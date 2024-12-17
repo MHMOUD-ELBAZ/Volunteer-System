@@ -20,7 +20,7 @@ namespace Demo.API.Services
                 options.Password.RequiredLength = 5;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
-                options.Password.RequireDigit = false;  
+                options.Password.RequireDigit = false;
                 options.Password.RequireUppercase = false;
                 options.User.RequireUniqueEmail = true;
             }).AddEntityFrameworkStores<AppDbContext>();
@@ -47,7 +47,7 @@ namespace Demo.API.Services
             services.AddScoped<ISkillService, SkillService>();
             services.AddScoped<IApplicationService, ApplicationService>();
             services.AddScoped<IReviewService, ReviewService>();
-            
+
 
             services.AddAuthentication(options =>
             {
@@ -62,12 +62,14 @@ namespace Demo.API.Services
                     ValidateIssuer = true,
                     ValidIssuer = configuration["JWT:issuer"],
                     ValidateIssuerSigningKey = true,
-                    ValidateAudience = true,
-                    ValidAudience = configuration["JWT:audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:secretKey"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:secretKey"])),
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
                 };
+
             });
 
+            services.AddAuthorization();
 
             services.AddControllers();
             services.AddEndpointsApiExplorer();
@@ -83,18 +85,23 @@ namespace Demo.API.Services
             // Add Swagger services
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Hands of hope-API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Hands of hope-API",
+                    Version = "v1"
+                });
 
-                // Add security definitions and requirements
+                // Add the JWT Security Definition
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "JWT Authorization header using the Bearer scheme.",
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer"
                 });
 
+                // Add the Security Requirement
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
@@ -104,9 +111,12 @@ namespace Demo.API.Services
                             {
                                 Type = ReferenceType.SecurityScheme,
                                 Id = "Bearer"
-                            }
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header
                         },
-                        new string[] { }
+                        Array.Empty<string>()
                     }
                 });
             });

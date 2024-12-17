@@ -13,6 +13,11 @@ public class OpportunityRepository: Repository<Opportunity>, IOpportunityReposit
     {
     }
 
+    public new IEnumerable<Opportunity>  GetAll()
+    {
+        return _dbContext.Opportunities.Include(o => o.Organization).ThenInclude(o => o.User);  
+    }
+
     public Opportunity? Get(int id)
     {
         return _dbContext.Opportunities.SingleOrDefault(o => o.Id == id);

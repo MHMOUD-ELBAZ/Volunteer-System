@@ -29,4 +29,9 @@ public class  ApplicationRepository : Repository<Application>, IApplicationRepos
     {
         return _dbContext.Applications.Include(a => a.Opportunity).Include(a => a.Volunteer).FirstOrDefault(a => a.Id == id);
     }
+
+    public Application? GetWithVolunteerAndOrganization(int id)
+    {
+        return _dbContext.Applications.Include(a => a.Volunteer).Include(a => a.Organization).FirstOrDefault(a => a.Id == id);
+    }
 }
