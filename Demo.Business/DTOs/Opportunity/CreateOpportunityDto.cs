@@ -8,8 +8,6 @@ namespace Demo.Business.DTOs.Opportunity;
 
 public class CreateOpportunityDto
 {
-    public required string OrganizationId { get; set; }
-
     public required string Description { get; set; } 
 
     public bool? IsOnline { get; set; }

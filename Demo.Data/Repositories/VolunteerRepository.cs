@@ -18,7 +18,7 @@ public class  VolunteerRepository: Repository<Volunteer>, IVolunteerRepository
 
     public Volunteer? GetVolunteer(string id)
     {
-        return _dbContext.Volunteers.Include(v => v.User).SingleOrDefault(v => v.VolunteerId == id); 
+        return _dbContext.Volunteers.Include(v => v.User).FirstOrDefault(v => v.VolunteerId == id); 
     }
 
     public Volunteer? GetVolunteerWithApplications(string id)

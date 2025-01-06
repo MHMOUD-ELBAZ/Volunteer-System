@@ -3,6 +3,7 @@ namespace Demo.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[ExceptionFilter]
 public class SkillController : ControllerBase
 {
     private readonly ISkillService _skillService;
@@ -16,145 +17,96 @@ public class SkillController : ControllerBase
     [HttpGet("GetAll")]
     public ActionResult<IEnumerable<SkillDto>> GetAll()
     {
-        try
-        {
-            var skills = _skillService.GetAllSkills();
-            return Ok(skills);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var skills = _skillService.GetAllSkills();
+        return Ok(skills);
     }
 
 
     [HttpGet("{id}")]
     public ActionResult<SkillDto> GetById(int id)
     {
-        try
+        var skill = _skillService.GetSkillById(id);
+        if (skill == null)
         {
-            var skill = _skillService.GetSkillById(id);
-            if (skill == null)
-            {
-                return NotFound($"Skill with ID {id} not found.");
-            }
+            return NotFound($"Skill with ID {id} not found.");
+        }
 
-            return Ok(skill);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(skill);
     }
 
 
     [HttpGet("{id}/opportunities")]
     public ActionResult<SkillWithOpportunitiesDto> GetWithOpportunities(int id)
     {
-        try
+        var skill = _skillService.GetSkillWithOpportunities(id);
+        if (skill == null)
         {
-            var skill = _skillService.GetSkillWithOpportunities(id);
-            if (skill == null)
-            {
-                return NotFound($"Skill with ID {id} not found.");
-            }
+            return NotFound($"Skill with ID {id} not found.");
+        }
 
-            return Ok(skill);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(skill);
     }
 
 
     [HttpGet("{id}/volunteers")]
     public ActionResult<SkillWithVolunteersDto> GetWithVolunteers(int id)
     {
-        try
+        var skill = _skillService.GetSkillWithVolunteers(id);
+        if (skill == null)
         {
-            var skill = _skillService.GetSkillWithVolunteers(id);
-            if (skill == null)
-            {
-                return NotFound($"Skill with ID {id} not found.");
-            }
+            return NotFound($"Skill with ID {id} not found.");
+        }
 
-            return Ok(skill);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(skill);
     }
 
 
     [HttpPost]
-    //[Authorize]
-    //[OrganizationFilter]
+    [Authorize]
+    [OrganizationFilter]
     public IActionResult Create([FromBody] CreateSkillDto skillDto)
     {
-        try
+        if (skillDto == null)
         {
-            if (skillDto == null)
-            {
-                return BadRequest("Skill data is null.");
-            }
+            return BadRequest("Skill data is null.");
+        }
 
-            var createdSkill = _skillService.CreateSkill(skillDto);
-            return CreatedAtAction(nameof(GetById), new { id = createdSkill.Id }, createdSkill);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var createdSkill = _skillService.CreateSkill(skillDto);
+        return CreatedAtAction(nameof(GetById), new { id = createdSkill.Id }, createdSkill);
     }
 
 
     [HttpPut("{id}")]
-    //[Authorize]
-    //[OrganizationFilter]
+    [Authorize]
+    [OrganizationFilter]
     public IActionResult Update(int id, [FromBody] SkillDto skillDto)
     {
-        try
+        if (skillDto == null)
         {
-            if (skillDto == null)
-            {
-                return BadRequest("Skill data is null.");
-            }
-
-            var updatedSkill = _skillService.UpdateSkill(id, skillDto);
-            if (updatedSkill == null)
-            {
-                return NotFound($"Skill with ID {id} not found.");
-            }
-
-            return Ok(updatedSkill);
+            return BadRequest("Skill data is null.");
         }
-        catch (Exception ex)
+
+        var updatedSkill = _skillService.UpdateSkill(id, skillDto);
+        if (updatedSkill == null)
         {
-            return BadRequest(ex.Message);
+            return NotFound($"Skill with ID {id} not found.");
         }
+
+        return Ok(updatedSkill);
     }
 
 
     [HttpDelete("{id}")]
-    //[Authorize]
-    //[OrganizationFilter]
+    [Authorize]
+    [OrganizationFilter]
     public IActionResult Delete(int id)
     {
-        try
+        var isDeleted = _skillService.DeleteSkill(id);
+        if (!isDeleted)
         {
-            var isDeleted = _skillService.DeleteSkill(id);
-            if (!isDeleted)
-            {
-                return NotFound($"Skill with ID {id} not found.");
-            }
+            return NotFound($"Skill with ID {id} not found.");
+        }
 
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return NoContent();
     }
 }

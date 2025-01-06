@@ -38,20 +38,6 @@ public static class OrganizationMapper
             Photo = (organization.User?.Photo != null ? $"Photos/Organization/{organization.User.Photo}" : null)
         }; 
     }
-
-    public static OrganizationWithApplicationsDto MapToOrgWithApplicationsDto(Organization organization)
-    {
-        return new OrganizationWithApplicationsDto
-        {
-            OrganizationId = organization.OrganizationId,
-            Mission = organization.Mission,
-            Website = organization.Website,
-            MainBranch = organization.MainBranch,
-            BankName = organization.BankName,
-            BankAccount = organization.BankAccount,
-            Applications = organization.Applications?.Select(a => ApplicationMapper.MapToApplicationDto(a)).ToList()
-        };
-    }
     public static OrganizationWithOpportunitiesDto MapToOrgWithOpportunitiesDto(Organization organization)
     {
         return new OrganizationWithOpportunitiesDto

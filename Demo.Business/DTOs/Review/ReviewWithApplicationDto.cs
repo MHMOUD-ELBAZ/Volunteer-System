@@ -13,6 +13,6 @@ public class ReviewWithApplicationDto
     public int Rating { get; set; }
     public DateTime? DateReviewed { get; set; }
     public string? Comment { get; set; }
-    public ApplicationDto? Application { get; set; }
+    public ApplicationWithOpportunity? Application { get; set; }
 
 }

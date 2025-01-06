@@ -10,7 +10,7 @@ namespace Demo.API.Filters
             if (userType != UserType.Volunteer.ToString())
                 context.Result = new ObjectResult("This action is forbidden for non-volunteer account.")
                 {
-                    StatusCode = 403
+                    StatusCode = StatusCodes.Status403Forbidden
                 };
         }
     }

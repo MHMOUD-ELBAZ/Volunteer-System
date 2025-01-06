@@ -64,9 +64,9 @@ public class VolunteerService : IVolunteerService
         return volunteer != null ? VolunteerMapper.MapToVolunteerWithAppDto(volunteer) : null;
     }
   
-    public VolunteerDto? UpdateVolunteerSkills(UpdateVolunteerSkillsDto dto)
+    public VolunteerDto? UpdateVolunteerSkills(string volunteerId,UpdateVolunteerSkillsDto dto)
     {
-        var old = _volunteerRepository.GetVolunteerWithSkills(dto.volunteerId); 
+        var old = _volunteerRepository.GetVolunteerWithSkills(volunteerId); 
         if(old == null) return null;
         
         old.VolunteerSkills.Clear();

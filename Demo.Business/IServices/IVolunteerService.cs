@@ -11,7 +11,7 @@ public interface IVolunteerService
     VolunteerDto? GetById(string volunteerId);
     VolunteerDto? UpdateVolunteer(string volunteerId, UpdateVolunteerDto volunteerDto);
 
-    VolunteerDto? UpdateVolunteerSkills(UpdateVolunteerSkillsDto dto);
+    VolunteerDto? UpdateVolunteerSkills(string volunteerId,UpdateVolunteerSkillsDto dto);
 
     VolunteerWithApplicationsDto? GetWithApplications(string volunteerId);
 

@@ -27,6 +27,6 @@ public class VolunteerSkillRepository : Repository<VolunteerSkill>, IVolunteerSk
 
     public IEnumerable<VolunteerSkill> GetVolunteersWithSkill(int skillId)
     {
-        return _dbContext.VolunteersSkills.Include(vs => vs.Volunteer).Where(vs => vs.SkillId == skillId);
+        return _dbContext.VolunteersSkills.Include(vs => vs.Volunteer).ThenInclude(v => v.User).Where(vs => vs.SkillId == skillId);
     }
 }

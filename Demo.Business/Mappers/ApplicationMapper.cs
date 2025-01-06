@@ -15,7 +15,6 @@ public class ApplicationMapper
             Id = application.Id,
             OpportunityId = application.OpportunityId,
             VolunteerId = application.VolunteerId,
-            OrganizationId = application.OrganizationId,
             Status = application.Status.ToString(),
             DateSent = application.DateSent
         };
@@ -28,7 +27,6 @@ public class ApplicationMapper
             Id = application.Id,
             OpportunityId = application.OpportunityId,
             VolunteerId = application.VolunteerId,
-            OrganizationId = application.OrganizationId,
             Status = application.Status.ToString(),
             DateSent = application.DateSent,
             Reviews = application.Reviews.Select(ReviewMapper.MapToReviewDto).ToList()
@@ -42,21 +40,43 @@ public class ApplicationMapper
             Id = application.Id,
             Opportunity = OpportunityMapper.MapToOpportunityDto(application.Opportunity),
             Volunteer = VolunteerMapper.MapToVolunteerDto(application.Volunteer),
-            OrganizationId = application.OrganizationId,
             Status = application.Status.ToString(),
             DateSent = application.DateSent
         };
     }
 
-    public static Application MapToApplication(CreateApplicationDto dto)
+    public static Application MapToApplication(string volunteerId,CreateApplicationDto dto)
     {
         return new Application
         {
             OpportunityId = dto.OpportunityId,
-            VolunteerId = dto.VolunteerId,
-            OrganizationId = dto.OrganizationId
+            VolunteerId = volunteerId
         };
     }
 
+    public static ApplicationWithOpportunity? MapToApplicationWithOpportunityDto(Application application)
+    {
+        return new ApplicationWithOpportunity
+        {
+            Id = application.Id,
+            OpportunityId = application.OpportunityId,
+            VolunteerId = application.VolunteerId,
+            Status = application.Status.ToString(),
+            DateSent = application.DateSent,
+            Opportunity = OpportunityMapper.MapToOpportunityDto(application.Opportunity)
+        };
+    }
+
+    internal static Application MapToApplication(ApplicationDto applicationDto)
+    {
+        return new Application
+        {
+            Id = applicationDto.Id,
+            OpportunityId = applicationDto.OpportunityId,
+            VolunteerId = applicationDto.VolunteerId,
+            Status = Enum.Parse<ApplicationStatus>(applicationDto.Status, true),
+            DateSent = applicationDto.DateSent
+        };
+    }
 }
 

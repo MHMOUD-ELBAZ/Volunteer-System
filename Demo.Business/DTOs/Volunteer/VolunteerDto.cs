@@ -22,6 +22,6 @@ public class VolunteerDto
     public string Email { get; set; } = null!;
     public string Photo { get; set; } = null!;
 
-    // Skills
+
     public List<SkillDto> Skills { get; set; } = new List<SkillDto>();
 }

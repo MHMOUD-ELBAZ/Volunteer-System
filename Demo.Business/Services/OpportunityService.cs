@@ -1,5 +1,6 @@
 ﻿using Demo.Business.DTOs;
 using Demo.Business.DTOs.Opportunity;
+using Demo.Business.Exceptions;
 using Demo.Business.Mappers;
 
 
@@ -25,12 +26,7 @@ public class OpportunityService : IOpportunityService
     public OpportunityDto? GetById(int id)
     {
         var opportunity = _opportunityRepository.Get(id);
-        
-        if(opportunity != null)
-        {
-            opportunity.OpportunitySkills = new List<OpportunitySkill>(_opportunitySkillRepository.GetSkillsForOpportunity(id));
-        }
-
+       
         return opportunity != null ? OpportunityMapper.MapToOpportunityDto(opportunity) : null;
     }
 
@@ -41,7 +37,6 @@ public class OpportunityService : IOpportunityService
         if (opportunity == null) return null; 
         
         opportunity.Organization = _organizationRepository.Get(opportunity.OrganizationId);
-        opportunity.OpportunitySkills = new List<OpportunitySkill>(_opportunitySkillRepository.GetSkillsForOpportunity(id));
 
         return OpportunityMapper.MapToOpportunityWithOrganizationDto(opportunity) ;
     }
@@ -58,7 +53,8 @@ public class OpportunityService : IOpportunityService
         return opportunities.Select(OpportunityMapper.MapToOpportunityWithOrganizationDto);
     }
 
-    public OpportunityDto Create(CreateOpportunityDto opportunityDto)
+
+    public OpportunityDto Create(CreateOpportunityDto opportunityDto, string organizationId)
     {
         //Check valid IDs
         if(opportunityDto.SkillIDs?.Any() ?? false)
@@ -72,7 +68,7 @@ public class OpportunityService : IOpportunityService
         }
         
         //Add opp
-        var opportunity = OpportunityMapper.MapToOpportunity(opportunityDto);
+        var opportunity = OpportunityMapper.MapToOpportunity(opportunityDto, organizationId);
         _opportunityRepository.Add(opportunity);
         _opportunityRepository.Save();
 
@@ -92,31 +88,43 @@ public class OpportunityService : IOpportunityService
         return OpportunityMapper.MapToOpportunityDto(opportunity);
     }
 
-    public OpportunityDto? Update(int id, CreateOpportunityDto opportunityDto)
+
+    public OpportunityDto? Update(int id,CreateOpportunityDto updatedOpportunityDto, string organizationId)
     {
         var opportunity = _opportunityRepository.Get(id);
-        if (opportunity == null) return null;
 
-        opportunity.Description = opportunityDto.Description;
-        opportunity.IsOnline = opportunityDto.IsOnline;
-        opportunity.Deadline = opportunityDto.Deadline;
+        if (opportunity == null)
+            return null; 
 
+        if(opportunity.OrganizationId != organizationId)
+            throw new ForbiddenAccessException("You are not authorized to update this opportunity.");
+
+
+        opportunity.Description = updatedOpportunityDto.Description;
+        opportunity.IsOnline = updatedOpportunityDto.IsOnline;
+        opportunity.Deadline = updatedOpportunityDto.Deadline;
+
+        
+        _opportunitySkillRepository.UpdateOpportunitySkills(opportunity, updatedOpportunityDto.SkillIDs); 
+        
         _opportunityRepository.Update(opportunity);
-
-        _opportunitySkillRepository.UpdateOpportunitySkills(opportunity, opportunityDto.SkillIDs); 
-
         _opportunityRepository.Save();
 
-        return GetById(id);
+        return GetById(opportunity.Id);
     }
 
-    public bool Delete(int id)
+    public bool Delete(int id, string organizationId)
     {
         var opportunity = _opportunityRepository.Get(id);
-        if (opportunity == null) return false;
+        if (opportunity == null)
+            throw new NotFoundException($"No opportunity found with ID: {id}");
+
+        if (opportunity.OrganizationId != organizationId)
+            throw new ForbiddenAccessException("You are not authorized to delete this opportunity.");
 
         _opportunityRepository.Delete(opportunity);
         _opportunityRepository.Save();
+
         return true;
     }
 }

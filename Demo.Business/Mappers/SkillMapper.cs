@@ -11,7 +11,7 @@ public class SkillMapper
 {
     public static SkillDto MapToSkillDto(Skill skill)
     {
-        return new SkillDto { Name = skill.Name??"", Id = skill.Id, Descritption = skill.Descritption };
+        return new SkillDto { Name = skill.Name??"", Id = skill.Id, Description = skill.Descritption };
     }
 
     public static SkillWithOpportunitiesDto MapToSkillWithOpportunitiesDto(Skill skill)
@@ -20,7 +20,7 @@ public class SkillMapper
         {
             Id = skill.Id,
             Name = skill.Name?? "",
-            Descritption = skill.Descritption,
+            Description = skill.Descritption,
             Opportunities = skill.OpportunitySkills.Select(os => OpportunityMapper.MapToOpportunityDto(os.Opportunity)).ToList()
         };
     }
@@ -31,7 +31,7 @@ public class SkillMapper
         {
             Id = skill.Id,
             Name = skill.Name,
-            Descritption = skill.Descritption,
+            Description = skill.Descritption,
             Volunteers = skill.VolunteerSkills.Select(vs => VolunteerMapper.MapToVolunteerDto(vs.Volunteer)).ToList()
         };
     }

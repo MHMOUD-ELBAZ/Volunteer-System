@@ -2,6 +2,7 @@
 
 [Route("api/[controller]")]
 [ApiController]
+[ExceptionFilter]
 public class OrganizationController : ControllerBase
 {
     private readonly IOrganizationService _organizationService;
@@ -12,90 +13,58 @@ public class OrganizationController : ControllerBase
     }
 
 
-    [HttpGet("{id}")]
-    public ActionResult<OrganizationDetailsDto> GetById(string id)
+    [HttpGet("details")]
+    [Authorize]
+    [OrganizationFilter]
+    public ActionResult<OrganizationDetailsDto> GetById()
     {
-        try
-        {
-            var organization = _organizationService.GetOrganizationById(id);
-            if (organization == null)
-                return NotFound($"No organization found with ID: {id}");
+        string organizationId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
 
-            return Ok(organization);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var organization = _organizationService.GetOrganizationById(organizationId);
+        if (organization == null)
+            return NotFound($"No organization found with ID: {organizationId}");
+
+        return Ok(organization);
     }
 
 
-    [HttpGet("{id}/applications")]
-    public ActionResult<OrganizationWithApplicationsDto> GetWithApplications(string id)
+    [HttpGet("reviews")]
+    [Authorize]
+    [OrganizationFilter]
+    public ActionResult<OrganizationWithReviewsDto> GetWithReviews()
     {
-        try
-        {
-            var organization = _organizationService.GetOrganizationWithApplications(id);
-            if (organization == null)
-                return NotFound($"No organization found with ID: {id}");
+        string id = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+        var organization = _organizationService.GetWithReviews(id);
 
-            return Ok(organization);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
+        if (organization == null)
+            return NotFound($"No organization found with ID: {id}");
 
-
-    [HttpGet("{id}/reviews")]
-    public ActionResult<OrganizationWithReviewsDto> GetWithReviews(string id)
-    {
-        try
-        {
-            var organization = _organizationService.GetWithReviews(id);
-            if (organization == null)
-                return NotFound($"No organization found with ID: {id}");
-
-            return Ok(organization);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(organization);
     }
       
     
-    [HttpGet("{id}/opportunities")]
-    public ActionResult<OrganizationWithOpportunitiesDto> GetWithOpportunities(string id)
+    [HttpGet("opportunities")]
+    [Authorize]
+    [OrganizationFilter]
+    public ActionResult<OrganizationWithOpportunitiesDto> GetWithOpportunities()
     {
-        try
-        {
-            var organization = _organizationService.GetOrganizationWithOpportunities(id);
-            if (organization == null)
-                return NotFound($"No organization found with ID: {id}");
+        string id = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+        
+        var organization = _organizationService.GetOrganizationWithOpportunities(id);
+        
+        if (organization == null)
+            return NotFound($"No organization found with ID: {id}");
 
-            return Ok(organization);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(organization);
     }
 
 
     [HttpGet("GetAll")]
+    [Authorize]
     public ActionResult<IEnumerable<OrganizationDto>> GetAll()
     {
-        try
-        {
-            var organizations = _organizationService.GetAllOrganizations();
-            return Ok(organizations);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var organizations = _organizationService.GetAllOrganizations();
+        return Ok(organizations);
     }
 
 }

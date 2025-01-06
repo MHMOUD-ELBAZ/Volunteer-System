@@ -18,9 +18,6 @@ public class ApplicationDto
     [StringLength(450)]
     public string? VolunteerId { get; set; }
 
-    [StringLength(450)]
-    public string? OrganizationId { get; set; }
-
     public string Status { get; set; }
 
     public DateTime? DateSent { get; set; }

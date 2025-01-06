@@ -13,7 +13,7 @@ namespace Demo.API.Filters
             if (userType != UserType.Organization.ToString())
                 context.Result = new ObjectResult("This action is forbidden for non-organization account.") 
                 { 
-                    StatusCode = 403
+                    StatusCode = StatusCodes.Status403Forbidden
                 }; 
         }
     }

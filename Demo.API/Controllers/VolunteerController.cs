@@ -6,7 +6,7 @@ namespace Demo.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-
+[ExceptionFilter]
 public class VolunteerController : ControllerBase
 {
     private readonly IVolunteerService _volunteerService;
@@ -20,80 +20,56 @@ public class VolunteerController : ControllerBase
     [HttpGet("{id}")]
     public ActionResult<VolunteerDto> Get(string id)
     {
-        try
-        {
-            var volunteer = _volunteerService.GetById(id);
-            if (volunteer == null)
-                return NotFound($"No volunteer with this ID: {id}");
+        var volunteer = _volunteerService.GetById(id);
+        if (volunteer == null)
+            return NotFound($"No volunteer with this ID: {id}");
 
-            return Ok(volunteer);
-        }
-        catch (Exception ex) { return BadRequest(ex.Message); }
+        return Ok(volunteer);
     }
 
 
     [HttpGet("GetAll")]
+    [Authorize]
+    [OrganizationFilter]
     public ActionResult<IEnumerable<VolunteerDto>> GetAll()
     {
-        try
-        {
-            var volunteers = _volunteerService.GetAllVolunteers();
-            return Ok(volunteers);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var volunteers = _volunteerService.GetAllVolunteers();
+        return Ok(volunteers);
     }
 
-    [HttpGet("{id}/applications")]
-    public ActionResult<VolunteerWithApplicationsDto> GetVolunteerApplications(string id)
+    [HttpGet("applications")]
+    [Authorize]
+    [VolunteerFilter]
+    public ActionResult<VolunteerWithApplicationsDto> GetVolunteerApplications()
     {
-        try
-        {
-            var volunteer = _volunteerService.GetWithApplications(id);
-            if (volunteer != null) return Ok(volunteer);
-            return NotFound($"No volunteer found with ID: {id}");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        string volunteerId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+
+        var volunteer = _volunteerService.GetWithApplications(volunteerId);
+        if (volunteer != null) return Ok(volunteer);
+        
+        return NotFound($"No volunteer found with ID: {volunteer}");
     }
 
     [HttpGet("{id}/reviews")]
     public ActionResult<VolunteerWithReviewsDto> GetVolunteerWithReviews(string id) 
     {
-        try
-        {
-            var volunteer = _volunteerService.GetWithReviews(id);
+        var volunteer = _volunteerService.GetWithReviews(id);
 
-            if (volunteer != null) return Ok(volunteer);
-            
-            return NotFound($"No volunteer found with ID: {id}");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        if (volunteer != null) return Ok(volunteer);
+
+        return NotFound($"No volunteer found with ID: {id}");
     }
 
     [HttpPut]
-    //[Authorize]
-    //[VolunteerFilter]
+    [Authorize]
+    [VolunteerFilter]
     public ActionResult<VolunteerDto> UpdateVolunteerSkills(UpdateVolunteerSkillsDto dto)
     {
-        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
-        //if (dto.volunteerId != tokenId)
-        //    return BadRequest($"ID mismatch.");
+        string volunteerId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
 
-        try
-        {
-            var updated = _volunteerService.UpdateVolunteerSkills(dto);
-            if (updated != null) return Ok(updated);
+        var updated = _volunteerService.UpdateVolunteerSkills(volunteerId, dto);
+        if (updated != null) return Ok(updated);
 
-            return NotFound($"No volunteer with this ID: {dto.volunteerId}");
-        }
-        catch (Exception ex) { return StatusCode(500, $"Internal server error: {ex.Message}"); }
+        return NotFound($"No volunteer with this ID: {volunteerId}");
     }
 }

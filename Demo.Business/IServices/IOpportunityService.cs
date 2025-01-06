@@ -8,7 +8,7 @@ public interface IOpportunityService
     OpportunityWithOrganizationDto? GetOpportunityWithOrganization(int id);
     OpportunityWithApplicationsDto? GetOpportunityWithApplications(int id);
     IEnumerable<OpportunityWithOrganizationDto> GetAllOpportunities();
-    OpportunityDto Create(CreateOpportunityDto opportunityDto);
-    OpportunityDto? Update(int id, CreateOpportunityDto opportunityDto);
-    bool Delete(int id);
+    OpportunityDto Create(CreateOpportunityDto opportunityDto, string organizationId);
+    OpportunityDto? Update(int id, CreateOpportunityDto updatedOpportunityDto, string organizationId);
+    bool Delete(int id, string organizationId);
 }

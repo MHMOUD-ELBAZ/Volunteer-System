@@ -26,9 +26,6 @@ public partial class Organization
     [ForeignKey(nameof(OrganizationId))]
     public virtual ApplicationUser User { get; set; } = null!;
 
-    [InverseProperty(nameof(Application.Organization))]
-    public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
-
     [InverseProperty(nameof(Opportunity.Organization))]
     public virtual ICollection<Opportunity> Opportunities { get; set; } = new List<Opportunity>();
 

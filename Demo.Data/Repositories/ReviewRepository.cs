@@ -27,7 +27,7 @@ public class ReviewRepository : Repository<Review>, IReviewRepository
 
     public Review? GetWithApplication(int id)
     {
-        return _dbContext.Reviews.Include(r => r.Application).FirstOrDefault(r => r.Id == id);     
+        return _dbContext.Reviews.Include(r => r.Application).ThenInclude(a => a.Opportunity).FirstOrDefault(r => r.Id == id);     
     }
 
 }

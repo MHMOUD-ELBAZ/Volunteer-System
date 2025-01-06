@@ -34,12 +34,6 @@ public class OrganizationService : IOrganizationService
         return organization != null ? OrganizationMapper.MapToOrganizationDetailsDto(organization) : null;
     }
 
-    public OrganizationWithApplicationsDto? GetOrganizationWithApplications(string id)
-    {
-        var organization = _organizationRepository.GetWithApplications(id);
-        return organization != null ? OrganizationMapper.MapToOrgWithApplicationsDto(organization) : null;
-    }
-
     public OrganizationWithOpportunitiesDto? GetOrganizationWithOpportunities(string id)
     {
         var organization = _organizationRepository.GetWithOpportunities(id);

@@ -69,14 +69,27 @@ public class OpportunityMapper
         };
     }
 
-    public static Opportunity MapToOpportunity(CreateOpportunityDto dto)
+    public static Opportunity MapToOpportunity(CreateOpportunityDto dto, string organizationId)
     {
         return new Opportunity
         {
-            OrganizationId = dto.OrganizationId,
+            OrganizationId = organizationId,
             Description = dto.Description,
             IsOnline = dto.IsOnline,
             Deadline = dto.Deadline
+        };
+    }    
+    
+    public static Opportunity MapToOpportunity(OpportunityDto dto)
+    {
+        return new Opportunity
+        {
+            Id = dto.Id,
+            OrganizationId = dto.OrganizationId,
+            Description = dto.Description,
+            IsOnline = dto.IsOnline,
+            Deadline = dto.Deadline,
+            DatePosted = dto.DatePosted
         };
     }
 }

@@ -1,11 +1,4 @@
-﻿using Demo.Business.DTOs.Skill;
-using Demo.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Demo.Business.Mappers;
 
 public class VolunteerMapper
@@ -59,7 +52,6 @@ public class VolunteerMapper
                 Id = app.Id,
                 DateSent = app.DateSent,
                 Status = app.Status.ToString(),
-                OrganizationId = app.OrganizationId,
                 OpportunityId = app.OpportunityId,
                 VolunteerId = app.VolunteerId,
             };

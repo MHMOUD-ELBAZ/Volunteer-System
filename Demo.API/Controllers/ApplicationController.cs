@@ -1,8 +1,11 @@
-﻿namespace Demo.API.Controllers;
+﻿using Demo.Business.Exceptions;
+
+namespace Demo.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-//[Authorize]
+[Authorize]
+[ExceptionFilter]
 public class ApplicationController : ControllerBase
 {
     private readonly IApplicationService _applicationService;
@@ -16,141 +19,91 @@ public class ApplicationController : ControllerBase
     [HttpGet("GetAll")]
     public ActionResult<IEnumerable<ApplicationDto>> GetAll()
     {
-        try
-        {
-            var applications = _applicationService.GetAllApplications();
-            return Ok(applications);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        string userId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+
+        UserType userType = Enum.Parse<UserType>(User.Claims.First(c => c.Type == nameof(UserType)).Value);
+
+
+        if (userType == UserType.Volunteer)
+            return Ok(_applicationService.GetApplicationsForVolunteer(userId));
+        else
+            return Ok(_applicationService.GetApplicationsForOrganization(userId));
     }
 
 
     [HttpGet("{id}")]
     public ActionResult<ApplicationDto> GetById(int id)
     {
-        try
+        var application = _applicationService.GetApplicationById(id);
+        if (application == null)
         {
-            var application = _applicationService.GetApplicationById(id);
-            if (application == null)
-            {
-                return NotFound($"Application with ID {id} not found.");
-            }
+            return NotFound($"Application with ID {id} not found.");
+        }
 
-            return Ok(application);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(application);
     }
 
 
     [HttpGet("{id}/reviews")]
     public ActionResult<ApplicationWithReviewsDto> GetWithReviews(int id)
     {
-        try
+        var application = _applicationService.GetApplicationWithReviews(id);
+        if (application == null)
         {
-            var application = _applicationService.GetApplicationWithReviews(id);
-            if (application == null)
-            {
-                return NotFound($"Application with ID {id} not found.");
-            }
+            return NotFound($"Application with ID {id} not found.");
+        }
 
-            return Ok(application);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(application);
     }
 
 
     [HttpGet("{id}/details")]
     public ActionResult<ApplicationWithOpportunityAndVolunteerDto> GetWithOpportunityAndVolunteer(int id)
     {
-        try
+        var application = _applicationService.GetWithOpportunityAndVolunteer(id);
+        if (application == null)
         {
-            var application = _applicationService.GetWithOpportunityAndVolunteer(id);
-            if (application == null)
-            {
-                return NotFound($"Application with ID {id} not found.");
-            }
+            return NotFound($"Application with ID {id} not found.");
+        }
 
-            return Ok(application);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(application);
     }
 
 
     [HttpPost]
-    //[VolunteerFilter]
+    [VolunteerFilter]
     public ActionResult<ApplicationDto> Create([FromBody] CreateApplicationDto createApplicationDto)
     {
-        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
-        //if (createApplicationDto.VolunteerId != tokenId)
-        //    return BadRequest($"Mismatch between logged in user ID and the data to be proceeded");
+        string volunteerId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+        if (createApplicationDto == null)
+            return BadRequest("Application data is null.");
 
-
-        try
-        {
-            if (createApplicationDto == null)
-                return BadRequest("Application data is null.");
-
-            var createdApplication = _applicationService.CreateApplication(createApplicationDto);
-            return CreatedAtAction(nameof(GetById), new { id = createdApplication.Id }, createdApplication);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var createdApplication = _applicationService.CreateApplication(volunteerId,createApplicationDto);
+        return CreatedAtAction(nameof(GetById), new { id = createdApplication.Id }, createdApplication);
     }
 
 
-    [HttpPut("{id}")]
-    //[OrganizationFilter]
-    public ActionResult<ApplicationDto> Update(int id, [FromBody] UpdateApplicationDto updateApplicationDto)
-    {       
+    [HttpPut]
+    [OrganizationFilter]
+    public ActionResult<ApplicationDto> Update([FromBody] UpdateApplicationDto updateApplicationDto)
+    {
+        string organizationId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
 
-        //if (updateApplicationDto == null)
-        //    return BadRequest("Application data is null.");
+        var updatedApplication = _applicationService.UpdateApplication(updateApplicationDto, organizationId);
+        if (updatedApplication == null)
+            return NotFound($"Application with ID: {updateApplicationDto.Id} not found.");
 
-        //if (id != updateApplicationDto.Id)
-        //    return BadRequest("ID mismatch.");
-
-        try
-        {
-            var updatedApplication = _applicationService.UpdateApplication(id, updateApplicationDto);
-            if (updatedApplication == null)
-                return NotFound($"Application with ID {id} not found.");
-
-            return Ok(updatedApplication);
-        }
-        catch (Exception ex) { return BadRequest(ex.Message); }
+        return Ok(updatedApplication);
     }
 
 
     [HttpDelete("{id}")]
-    //[VolunteerFilter]
+    [VolunteerFilter]
     public IActionResult Delete(int id)
     {
-        
-        try
-        {
-            if (!_applicationService.DeleteApplication(id))
-                return NotFound($"Application with ID {id} not found.");
+        var volunteerId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
 
-
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+        _applicationService.DeleteApplication(id, volunteerId);
+        return NoContent();   
     }
 }

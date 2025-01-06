@@ -1,11 +1,5 @@
-﻿
-using Demo.Business.DTOs;
-using Demo.Data.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.InteropServices;
-using System.Security.Claims;
 using System.Text;
 
 namespace Demo.API.Controllers;
@@ -31,7 +25,7 @@ public class AccountController : ControllerBase
 
     #region Register
 
-    [HttpPost("registerV")]
+    [HttpPost("registerVolunteer")]
     public async Task<ActionResult<VolunteerDto>> RegisterVolunteer([FromForm] RegisterVolunteerDto dto)
     {
         try
@@ -50,7 +44,7 @@ public class AccountController : ControllerBase
     }
 
 
-    [HttpPost("registerO")]
+    [HttpPost("registerOrganization")]
     public async Task<ActionResult<OrganizationDetailsDto>> RegisterOrganization([FromForm] RegisterOrganizationDto dto)
     {
         try
@@ -126,7 +120,7 @@ public class AccountController : ControllerBase
         }; 
 
         
-        SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:secretKey"]));
+        SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:secretKey"]?? "TempSecretKey016188"));
         SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha384);
 
         JwtSecurityToken tokenDesign = new JwtSecurityToken(
@@ -145,21 +139,19 @@ public class AccountController : ControllerBase
 
     #region Delete Account
 
-    //[Authorize]
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(string id) 
+    [Authorize]
+    [HttpDelete]
+    public async Task<IActionResult> Delete() 
     {
-        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
-        //if (id != tokenId)
-        //    return BadRequest($"The logged user with ID: {tokenId} can't delete user with ID: {id}"); 
-        
+        string id = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+
+
         var user = await _userManager.FindByIdAsync(id);
         if (user == null)
             return NotFound($"No user found with ID = {id}");
 
         if(user.Photo != null)
             PhotoSetting.Delete(user.UserType.ToString(), user.Photo);
-
 
         try
         {
@@ -182,13 +174,11 @@ public class AccountController : ControllerBase
 
     #region Update
 
-    [HttpPut("updateVolunteer/{volunteerId}")]
-    //[Authorize]
-    public async Task<ActionResult> UpdateVolunteer(string volunteerId, [FromForm] UpdateVolunteerDto dto)
+    [HttpPut("updateVolunteer")]
+    [Authorize]
+    public async Task<ActionResult> UpdateVolunteer([FromForm] UpdateVolunteerDto dto)
     {
-        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
-        //if (volunteerId != tokenId)
-        //    return BadRequest($"The logged user with ID: {tokenId} can't update data for user with ID: {volunteerId}");
+        string volunteerId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
 
         try
         {
@@ -224,13 +214,11 @@ public class AccountController : ControllerBase
     }
 
 
-    [HttpPut("updateOrganization/{organizationId}")]
-    //[Authorize]
-    public async Task<ActionResult> UpdateOrganization(string organizationId,[FromForm] UpdateOrganizationDto dto)
+    [HttpPut("updateOrganization")]
+    [Authorize]
+    public async Task<ActionResult> UpdateOrganization([FromForm] UpdateOrganizationDto dto)
     {
-        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
-        //if (organizationId != tokenId)
-        //    return BadRequest($"The logged user with ID: {tokenId} can't update data for user with ID: {organizationId}");
+        string organizationId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
 
         try
         {
@@ -267,5 +255,6 @@ public class AccountController : ControllerBase
     }
 
     #endregion
+   
 }
 

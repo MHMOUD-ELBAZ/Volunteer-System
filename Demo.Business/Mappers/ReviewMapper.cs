@@ -28,7 +28,7 @@ public class ReviewMapper
             Id = review.Id,
             Application = ApplicationMapper.MapToApplicationDto(review.Application),
             Volunteer = VolunteerMapper.MapToVolunteerDto(review.Application.Volunteer),
-            Organization = OrganizationMapper.MapToOrganizationDto(review.Application.Organization),
+            Organization = OrganizationMapper.MapToOrganizationDto(review.Application.Opportunity.Organization),
             Rating = review.Rating,
             DateReviewed = review.DateReviewed,
             Comment = review.Comment
@@ -40,7 +40,7 @@ public class ReviewMapper
         return new ReviewWithApplicationDto
         {
             Id = review.Id, 
-            Application = ApplicationMapper.MapToApplicationDto(review.Application),
+            Application = ApplicationMapper.MapToApplicationWithOpportunityDto(review.Application),
             Rating = review.Rating,
             DateReviewed = review.DateReviewed,
             Comment = review.Comment,

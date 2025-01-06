@@ -1,7 +1,4 @@
-﻿
-
-using Demo.Business.DTOs.Opportunity;
-using Demo.Business.DTOs.Review;
+﻿using Demo.Business.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
@@ -9,6 +6,7 @@ namespace Demo.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[ExceptionFilter]
 public class ReviewController : ControllerBase
 {
     private readonly IReviewService _reviewService;
@@ -22,136 +20,90 @@ public class ReviewController : ControllerBase
     [HttpGet("GetAll")]
     public ActionResult<IEnumerable<ReviewDto>> GetAll()
     {
-        try
-        {
-            var reviews = _reviewService.GetAllReviews();
-            return Ok(reviews);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var reviews = _reviewService.GetAllReviews();
+        return Ok(reviews);
     }
 
 
     [HttpGet("{id}")]
     public ActionResult<ReviewDto> GetById(int id)
     {
-        try
-        {
-            var review = _reviewService.GetReviewById(id);
-            if (review == null)
-                return NotFound($"Review with ID {id} not found.");
+        var review = _reviewService.GetReviewById(id);
+        if (review == null)
+            return NotFound($"Review with ID {id} not found.");
 
-            return Ok(review);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(review);
     }
 
 
     [HttpGet("{id}/details")]
     public ActionResult<ReviewWithAllDataDto> GetWithAllData(int id)
     {
-        try
-        {
-            var review = _reviewService.GetReviewWithAllData(id);
-            if (review == null)
-                return NotFound($"Review with ID {id} not found.");
+        var review = _reviewService.GetReviewWithAllData(id);
+        if (review == null)
+            return NotFound($"Review with ID {id} not found.");
 
-            return Ok(review);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(review);
     }
 
 
     [HttpGet("{id}/application")]
     public ActionResult<ReviewWithApplicationDto> GetWithApplication(int id)
     {
-        try
-        {
-            var review = _reviewService.GetReviewWithApplication(id);
-            if (review == null)
-                return NotFound($"Review with ID {id} not found.");
+        var review = _reviewService.GetReviewWithApplication(id);
+        if (review == null)
+            return NotFound($"Review with ID {id} not found.");
 
-            return Ok(review);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(review);
     }
 
 
     [HttpPost]
-    //[Authorize]
-    //[OrganizationFilter]
+    [Authorize]
+    [OrganizationFilter]
     public ActionResult<ReviewDto> Create([FromBody] CreateReviewDto createReviewDto)
     {
-        //string tokenId = User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
-        //if (createReviewDto.OrganizationId != tokenId)
-        //    return BadRequest($"Organization with ID: {tokenId} can't add review instead of organization with ID: {createReviewDto.OrganizationId}");
+        if (createReviewDto == null)
+            return BadRequest("Review data is null.");
 
-        try
-        {
-            if (createReviewDto == null)
-                return BadRequest("Review data is null.");
+        string organizationId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
 
-            var createdReview = _reviewService.CreateReview(createReviewDto);
-            return CreatedAtAction(nameof(GetById), new { id = createdReview.Id }, createdReview);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var createdReview = _reviewService.CreateReview(createReviewDto, organizationId);
+
+        if (createdReview == null)
+            return NotFound($"Application with ID: {createReviewDto.ApplicationId} not found.");
+
+        return CreatedAtAction(nameof(GetById), new { id = createdReview.Id }, createdReview);
     }
 
 
     [HttpPut("{id}")]
-    //[Authorize]
-    //[OrganizationFilter]
+    [Authorize]
+    [OrganizationFilter]
     public ActionResult<ReviewDto> Update(int id, [FromBody] UpdateReviewDto updateReviewDto)
     {
+        if (updateReviewDto == null)
+            return BadRequest("Review data is null.");
 
-        try
-        {
-            if (updateReviewDto == null)
-                return BadRequest("Review data is null.");
+        string organizationId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
 
-            var updatedReview = _reviewService.UpdateReview(id, updateReviewDto);
-            if (updatedReview == null)
-                return NotFound($"Review with ID {id} not found.");
+        var updatedReview = _reviewService.UpdateReview(id, updateReviewDto, organizationId);
+        if (updatedReview == null)
+            return NotFound($"Review with ID {id} not found.");
 
-            return Ok(updatedReview);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(updatedReview);
     }
 
 
     [HttpDelete("{id}")]
-    //[Authorize]
-    //[OrganizationFilter]    
+    [Authorize]
+    [OrganizationFilter]
     public IActionResult Delete(int id)
     {
-        try
-        {
-            var isDeleted = _reviewService.DeleteReview(id);
-            if (!isDeleted)
-                return NotFound($"Review with ID {id} not found.");
+        string organizationId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
 
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        _reviewService.DeleteReview(id, organizationId);
+
+        return NoContent();
     }
 }

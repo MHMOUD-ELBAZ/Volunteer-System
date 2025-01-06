@@ -16,8 +16,6 @@ public partial class Application
     [StringLength(450)]
     public string? VolunteerId { get; set; }
 
-    [StringLength(450)]
-    public string? OrganizationId { get; set; }
 
     [StringLength(32)]
     [Column(TypeName = "varchar(32)")]
@@ -26,18 +24,14 @@ public partial class Application
     [Column(TypeName = "datetime")]
     public DateTime? DateSent { get; set; } = DateTime.Now; 
 
-    [ForeignKey("OpportunityId")]
-    [InverseProperty("Applications")]
+    [ForeignKey(nameof(OpportunityId))]
+    [InverseProperty(nameof(Opportunity.Applications))]
     public virtual Opportunity? Opportunity { get; set; }
 
-    [ForeignKey("OrganizationId")]
-    [InverseProperty("Applications")]
-    public virtual Organization? Organization { get; set; }
-
-    [InverseProperty("Application")]
+    [InverseProperty(nameof(Review.Application))]
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 
-    [ForeignKey("VolunteerId")]
-    [InverseProperty("Applications")]
+    [ForeignKey(nameof(VolunteerId))]
+    [InverseProperty(nameof(Volunteer.Applications))]
     public virtual Volunteer? Volunteer { get; set; }
 }

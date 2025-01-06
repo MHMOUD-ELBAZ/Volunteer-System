@@ -27,6 +27,6 @@ public class SkillRepository : Repository<Skill>, ISkillRepository
 
     public Skill? GetSkillWithVolunteers(int id)
     {
-        return _dbContext.Skills.Include(s => s.VolunteerSkills).FirstOrDefault(s => s.Id == id);
+        return _dbContext.Skills.Include(s => s.VolunteerSkills).ThenInclude(vs => vs.Volunteer).ThenInclude(v => v.User).FirstOrDefault(s => s.Id == id);
     }
 }

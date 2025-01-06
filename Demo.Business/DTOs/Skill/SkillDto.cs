@@ -14,5 +14,5 @@ public class SkillDto
 
     public required string Name { get; set; }
 
-    public string? Descritption { get; set; }
+    public required string Description { get; set; }
 }

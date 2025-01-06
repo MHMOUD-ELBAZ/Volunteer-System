@@ -9,9 +9,9 @@ public interface IReviewService
     ReviewWithAllDataDto? GetReviewWithAllData(int id);
     ReviewWithApplicationDto? GetReviewWithApplication(int id);
     IEnumerable<ReviewDto> GetAllReviews();
-    ReviewDto CreateReview(CreateReviewDto createReviewDto);
-    ReviewDto? UpdateReview(int id, UpdateReviewDto updateReviewDto);
-    bool DeleteReview(int id);
+    ReviewDto CreateReview(CreateReviewDto createReviewDto, string organizationId);
+    ReviewDto? UpdateReview(int id, UpdateReviewDto updateReviewDto, string organizationId);
+    bool DeleteReview(int id, string organizationId);
 }
 
 

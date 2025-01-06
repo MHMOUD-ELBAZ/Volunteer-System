@@ -13,13 +13,13 @@ public partial class Skill
 
     [StringLength(64)]
     [Unicode(false)]
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
-    public string? Descritption { get; set; }
+    public string Descritption { get; set; }
 
-    [InverseProperty("Skill")]
+    [InverseProperty(nameof(OpportunitySkill.Skill))]
     public virtual ICollection<OpportunitySkill> OpportunitySkills { get; set; } = new List<OpportunitySkill>();
 
-    [InverseProperty("Skill")]
+    [InverseProperty(nameof(VolunteerSkill.Skill))]
     public virtual ICollection<VolunteerSkill> VolunteerSkills { get; set; } = new List<VolunteerSkill>();
 }

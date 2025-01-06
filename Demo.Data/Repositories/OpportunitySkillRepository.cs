@@ -30,10 +30,9 @@ public class OpportunitySkillRepository : Repository<OpportunitySkill>, IOpportu
         if (opportunity == null)
             return;
 
-        // Remove existing OpportunitySkill 
-        _dbContext.OpportunitiesSkills.RemoveRange(opportunity.OpportunitySkills);
-        
-        if(skillIds != null)
+        opportunity.OpportunitySkills.Clear();
+
+        if (skillIds != null)
         {
             // Add new OpportunitySkill 
             foreach (var skillId in skillIds)
@@ -47,6 +46,6 @@ public class OpportunitySkillRepository : Repository<OpportunitySkill>, IOpportu
 
     public void DeleteOpportunitySkill(int opportunityId)
     {
-        _dbContext.OpportunitiesSkills.FromSqlRaw("DELETE FORM OpportunitySkill WHERE opportunityId = {0}", opportunityId);
+        _dbContext.OpportunitiesSkills.FromSqlInterpolated($"DELETE FORM OpportunitySkill WHERE opportunityId = {opportunityId}");
     }
 }

@@ -8,12 +8,14 @@ namespace Demo.Business.Services
     public class SkillService : ISkillService
     {
         private readonly ISkillRepository _skillRepository;
-        private readonly IOpportunitySkillRepository _oSRepository;
+        private readonly IOpportunitySkillRepository _osRepository;
+        private readonly IVolunteerSkillRepository _vsRepository;
 
-        public SkillService(ISkillRepository skillRepository, IOpportunitySkillRepository oSRepository)
+        public SkillService(ISkillRepository skillRepository, IOpportunitySkillRepository oSRepository, IVolunteerSkillRepository volunteerSkillRepository)
         {
             _skillRepository = skillRepository;
-            _oSRepository = oSRepository;
+            _osRepository = oSRepository;
+            _vsRepository = volunteerSkillRepository;
         }
 
         public SkillDto? GetSkillById(int id)
@@ -28,13 +30,17 @@ namespace Demo.Business.Services
             
             if(skill == null) return null;
 
-            skill.OpportunitySkills = new List<OpportunitySkill>(_oSRepository.GetOpportunitiesWithSkill(id)); 
+            skill.OpportunitySkills = new List<OpportunitySkill>(_osRepository.GetOpportunitiesWithSkill(id)); 
             return SkillMapper.MapToSkillWithOpportunitiesDto(skill);
         }
 
         public SkillWithVolunteersDto? GetSkillWithVolunteers(int id)
         {
-            var skill = _skillRepository.GetSkillWithVolunteers(id);
+            var skill = _skillRepository.GetSkill(id);
+            if(skill == null) return null;
+
+            skill.VolunteerSkills = new List<VolunteerSkill>(_vsRepository.GetVolunteersWithSkill(id));
+
             return skill != null ? SkillMapper.MapToSkillWithVolunteersDto(skill) : null;
         }
 
@@ -58,7 +64,7 @@ namespace Demo.Business.Services
             if (skill == null) return null;
 
             skill.Name = skillDto.Name;
-            skill.Descritption = skillDto.Descritption;
+            skill.Descritption = skillDto.Description;
 
             _skillRepository.Update(skill);
             _skillRepository.Save();
