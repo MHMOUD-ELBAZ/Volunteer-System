@@ -21,16 +21,16 @@ The Hands of Hope Volunteer Management System is a backend API designed to strea
 ## **Architecture**
 This project follows the **Clean Architecture** pattern to ensure scalability, maintainability, and separation of concerns. The main layers include:
 
+1. **Data Layer**:
+   - Contains definitions for core data models. 
+   - Manages data access and database connection.
+   - Implements repositories for each entity with both LINQ and raw SQL approaches.
+
 2. **Business Layer**:
    - Contains definitions for all data transfer objects.
    - Contains business use cases and interfaces for all services.
    - Implements all services which include part of data access validations.
    - Contains definitions for mappers classes that used to map data between models and DTOs.
-
-1. **Data Layer**:
-   - Contains definitions for core data models. 
-   - Manages data access and database connection.
-   - Implements repositories for each entity with both LINQ and raw SQL approaches.
 
 3. **API Layer**:
    - Exposes the RESTful APIs for CRUD operations.
